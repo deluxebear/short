@@ -237,7 +237,7 @@
         loginError: null,
         isLoggedIn: false,
         login() {
-          if (this.username === 'admin' && this.password === 'api_key') {
+          if (this.username === 'admin') {
             localStorage.setItem('api_key', this.password);
             this.isLoggedIn = true;
           } else {
