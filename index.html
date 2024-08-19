@@ -203,7 +203,7 @@
     </style>
   </head>
 <body>
-    <header><h1>短链接服务</h1></header>
+    <header><h1>短链服务</h1></header>
     <main x-data="app" x-cloak>
       <p x-show.transition.opacity="alert" :class="alert?.type" x-text="alert?.message"></p>
       <input placeholder="输入要缩短的网址..." x-model="url" x-ref="url" />
@@ -227,7 +227,7 @@
         alert: null,
         loading: false,
         apiKey: '',
-        isValidated() {
+        isValidated () {
           return !/^https?:\/\/.{3,}/.test(this.url)
         },
         checkApiKey() {
@@ -247,7 +247,7 @@
             this.alert = { type: 'error', message: 'API Key 是必须的。' };
           }
         },
-        submit($refs, $nextTick) {
+        submit ($refs, $nextTick) {
           if (!this.url) {
             this.alert = { type: 'error', message: '缺少必需的参数：url。' }
             return
@@ -303,12 +303,11 @@
         }
       };
 
-      // 在页面加载时初始化
       document.addEventListener('alpine:init', () => {
         Alpine.data('app', () => ({
           ...app,
           init() {
-            app.init.call(this);
+            this.checkApiKey();
           }
         }));
       });
