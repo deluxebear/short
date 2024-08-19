@@ -2,7 +2,7 @@
 
 一个使用 Cloudflare Pages 创建的 URL 缩短器
 
-*Demo* : [https://d.131213.xyz/](https://d.131213.xyz/)
+增加了通过环境变量设置 api_key 来进行 token 认证
 
 
 
@@ -51,10 +51,10 @@ CREATE TABLE IF NOT EXISTS logs (
 
 ```bash
 # POST /create
-curl -X POST -H "Content-Type: application/json" -d '{"url":"https://131213.xyz"}' https://d.131213.xyz/create
+curl -X POST -H "Content-Type: application/json" -d '{"url":"https:// xxx.xyz"}' https://d.xxx.xyz/create
 
 # 指定slug
-curl -X POST -H "Content-Type: application/json" -d '{"url":"https://131213.xyz","slug":"scxs"}' https://d.131213.xyz/create
+curl -X POST -H "Content-Type: application/json" -d '{"url":"https://xxx.xyz","slug":"scxs"}' https://d.xxx.xyz/create
 
 ```
 
@@ -65,7 +65,7 @@ curl -X POST -H "Content-Type: application/json" -d '{"url":"https://131213.xyz"
 ```json
 {
   "slug": "<slug>",
-  "link": "http://d.131213.xyz/<slug>"
+  "link": "http://d.xxx.xyz/<slug>"
 }
 ```
 
