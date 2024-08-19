@@ -226,6 +226,8 @@
         </div>
       </details>
       <button :class="{ loading }" :disabled="loading || isValidated()" @click="submit($refs, $nextTick)">生成</button>
+            <button @click="logout" style="margin-top: 1rem; background-color: #fa5252; color: #fff;">重新登录</button>
+
     </main>
     <footer>
       VAYI IT service
@@ -305,13 +307,29 @@
             this.loading = false;
           });
         },
+        logout() {
+          localStorage.removeItem('api_key');  // 清除 localStorage 中的 api_key
+          this.isLoggedIn = false;            // 设置为未登录状态
+          loginApp.isLoggedIn = false;        // 同步 loginApp 的状态
+        },
         init() {
           this.apiKey = localStorage.getItem('api_key');
           this.isLoggedIn = !!this.apiKey;
         }
       };
+      // 处理 URL 中的 token 参数
+      function handleToken() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+          localStorage.setItem('api_key', token);
+          loginApp.isLoggedIn = true;
+          app.isLoggedIn = true;
+        }
+      }
 
       document.addEventListener('alpine:init', () => {
+        handleToken(); // 在初始化时处理 token
         Alpine.data('loginApp', () => loginApp);
         Alpine.data('app', () => app);
       });
