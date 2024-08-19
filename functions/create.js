@@ -17,6 +17,7 @@ function generateRandomString(length) {
 }
 
 export async function onRequest(context) {
+    const { request, env } = context;
     if (context.request.method === 'OPTIONS') {
         return new Response(null, {
             headers: {
@@ -27,8 +28,18 @@ export async function onRequest(context) {
             },
         });
     }
+    const apiKey = request.headers.get('Authorization');
+    if (!apiKey || apiKey !== `Bearer ${env.API_KEY}`) {
+        return new Response(JSON.stringify({ message: 'Unauthorized' }), {
+            status: 401,
+            headers: {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*',
+            },
+        });
+    }
 // export async function onRequestPost(context) {
-    const { request, env } = context;
+    
     const originurl = new URL(request.url);
     const clientIP = request.headers.get("x-forwarded-for") || request.headers.get("clientIP");
     const userAgent = request.headers.get("user-agent");
