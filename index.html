@@ -202,8 +202,8 @@
       }
     </style>
   </head>
-  <body>
-    <header><h1>short</h1></header>
+<body>
+    <header><h1>短链接服务</h1></header>
     <main x-data="app" x-cloak>
       <p x-show.transition.opacity="alert" :class="alert?.type" x-text="alert?.message"></p>
       <input placeholder="输入要缩短的网址..." x-model="url" x-ref="url" />
@@ -217,7 +217,7 @@
       <button :class="{ loading }" :disabled="loading || isValidated()" @click="submit($refs, $nextTick)">生成</button>
     </main>
     <footer>
-     service
+     VAYI IT service
     </footer>
     <script src="asset/js/alpine.js"></script>
     <script>
@@ -226,10 +226,28 @@
         slug: '',
         alert: null,
         loading: false,
-        isValidated () {
+        apiKey: '',
+        isValidated() {
           return !/^https?:\/\/.{3,}/.test(this.url)
         },
-        submit ($refs, $nextTick) {
+        checkApiKey() {
+          // 检查本地存储中是否存在 api_key
+          this.apiKey = localStorage.getItem('api_key');
+          if (!this.apiKey) {
+            this.promptForApiKey();
+          }
+        },
+        promptForApiKey() {
+          // 弹出密码框，提示用户输入 API 密钥
+          const inputKey = prompt('请输入您的 API Key:');
+          if (inputKey) {
+            this.apiKey = inputKey;
+            localStorage.setItem('api_key', this.apiKey);
+          } else {
+            this.alert = { type: 'error', message: 'API Key 是必须的。' };
+          }
+        },
+        submit($refs, $nextTick) {
           if (!this.url) {
             this.alert = { type: 'error', message: '缺少必需的参数：url。' }
             return
@@ -237,6 +255,11 @@
 
           if (this.isValidated()) {
             this.alert = { type: 'error', message: '非法格式：url。' }
+            return
+          }
+
+          if (!this.apiKey) {
+            this.alert = { type: 'error', message: 'API Key 是必须的。' }
             return
           }
 
@@ -248,7 +271,10 @@
 
           fetch('/create', {
             method: 'post',
-            headers: { 'content-type': 'application/json' },
+            headers: { 
+              'content-type': 'application/json',
+              'Authorization': `Bearer ${this.apiKey}` // 使用存储的 api_key 进行请求
+            },
             body: JSON.stringify(body)
           })
             .then(res => res.json())
@@ -270,8 +296,22 @@
               this.alert = { type: 'error', message: e.message }
               this.loading = false
             })
+        },
+        init() {
+          // 初始化时检查 API Key
+          this.checkApiKey();
         }
-      }
+      };
+
+      // 在页面加载时初始化
+      document.addEventListener('alpine:init', () => {
+        Alpine.data('app', () => ({
+          ...app,
+          init() {
+            app.init.call(this);
+          }
+        }));
+      });
     </script>
   </body>
 </html>
